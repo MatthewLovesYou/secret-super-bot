@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 import random
 import re
+import bot_token # type: ignore
 
 class client(commands.Bot):
     async def on_ready(self):
@@ -116,9 +117,9 @@ def wiadomoscLosow(listaKostkaBonusyIlosci):
     sumaCyfr += bonus
 
     if bonus == 0:
-            return(f'{dzialanieWiadomosc}  =  __{sumaCyfr}__')
+            return(f'-# {dzialanieWiadomosc}  = \n## __ {sumaCyfr} __')
     else:
-        return(f'{dzialanieWiadomosc} + *{bonus}* =  __{sumaCyfr}__')
+        return(f'-# {dzialanieWiadomosc} + *{bonus}* = \n## __ {sumaCyfr} __')
     
 def wzmocnionaDecyzja(ilosc, kosc, bonus):
     kolejnoWiadomosc = ''
@@ -183,14 +184,23 @@ async def sayWiadomosc(interaction: discord.Interaction, wiadmosc: str):
     await interaction.response.send_message(f'{wiadmosc}')
 
 
-@client.tree.command(name="roll", description="Rzuć kością!", guild = GUILD_ID)
+@client.tree.command(name="roll", description="Rzuć jedną kością", guild = GUILD_ID)
+async def sayWiadomosc(interaction: discord.Interaction, kosc: int, bonus: int):
+    await interaction.response.send_message(f'{wiadomoscLosow(seriaLosow([1, kosc, bonus], True))}')
+@client.tree.command(name="roll20", description="Rzuć jedną kością d20!", guild = GUILD_ID)
+async def sayWiadomosc(interaction: discord.Interaction, bonus: int):
+    await interaction.response.send_message(f'{wiadomoscLosow(seriaLosow([1, 20, bonus], True))}')
+@client.tree.command(name="multiroll", description="Rzuć kilkoma dowolnymi kośćmi!", guild = GUILD_ID)
 async def sayWiadomosc(interaction: discord.Interaction, ilosc: int, kosc: int, bonus: int):
     await interaction.response.send_message(f'{wiadomoscLosow(seriaLosow([ilosc, kosc, bonus], True))}')
 
-@client.tree.command(name="adv", description="Rzuć kością, z przewagą!", guild = GUILD_ID)
+@client.tree.command(name="adv", description="Rzuć kością, z przewagą!", guild = GUILD_ID) ##blad
 async def sayWiadomosc(interaction: discord.Interaction, ilosc: int, kosc: int, bonus: int):
     await interaction.response.send_message(f'{kilkaWzmocnien(ilosc, kosc, bonus)}')
 
 @client.tree.command(name="disadv", description="Rzuć kością, z osłabieniem!", guild = GUILD_ID)
 async def sayWiadomosc(interaction: discord.Interaction, ilosc: int, kosc: int, bonus: int):
     await interaction.response.send_message(f'{kilkaOslabien(ilosc, kosc, bonus)}')
+
+
+client.run(bot_token.tokenId)
